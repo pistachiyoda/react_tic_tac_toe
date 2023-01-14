@@ -1,8 +1,113 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
+import { Board } from "./components/Board";
+import { Player } from "./components/Player";
+import { BoardModel } from "./models/boardModel";
+import { PlayerModel } from "./models/playerModel";
+import { position } from "./models/interfaces";
 
 function App() {
-  return <div className="App"></div>;
+  const [players, setPlayers] = useState([
+    new PlayerModel("player1", "○"),
+    new PlayerModel("player2", "x"),
+  ]);
+  const [currentPlayer, setCurrentPlayer] = useState(players[0]);
+  const [board, setBoard] = useState(new BoardModel());
+
+  const onClick = (position: position, board: BoardModel) => {
+    setBoard(currentPlayer.setMark(position, board));
+    togglePlayer();
+    checkThreeInARow();
+  };
+
+  const togglePlayer = () => {
+    setCurrentPlayer(currentPlayer === players[0] ? players[1] : players[0]);
+  };
+
+  const checkThreeInARow = (): PlayerModel | null => {
+    for (let playerIndex = 0; playerIndex < 2; playerIndex++) {
+      for (let i = 0; i < 3; i++) {
+        const sameXBlocks = board.blocks.filter(
+          (block) => block.position.x === i
+        );
+        const sameYBlocks = board.blocks.filter(
+          (block) => block.position.y === i
+        );
+        if (
+          sameXBlocks.every(
+            (block) => players[playerIndex].mark === block.status
+          ) ||
+          sameYBlocks.every(
+            (block) => players[playerIndex].mark === block.status
+          )
+        )
+          return players[playerIndex];
+      }
+
+      const diagonal1Blocks = [
+        board.blocks[0],
+        board.blocks[4],
+        board.blocks[8],
+      ];
+      const diagonal2Blocks = [
+        board.blocks[2],
+        board.blocks[4],
+        board.blocks[6],
+      ];
+      if (
+        diagonal1Blocks.every(
+          (block) => players[playerIndex].mark === block.status
+        ) ||
+        diagonal2Blocks.every(
+          (block) => players[playerIndex].mark === block.status
+        )
+      )
+        return players[playerIndex];
+    }
+    return null;
+  };
+
+  // const init = () => {
+  //   setPlayers([
+  //     new PlayerModel("player1", "○"),
+  //     new PlayerModel("player2", "x"),
+  //   ]);
+  //   setCurrentPlayer(players[0]);
+  //   setBoard(new BoardModel());
+  // };
+
+  // const endGame = (
+  //   renderBoard: (blocks: BlockModel[]) => void,
+  //   message: string
+  // ) => {
+  //   if (confirm(`${message}!もう一回プレイしましょう！！`)) {
+  //     init();
+  //   }
+  // };
+
+  // const endWithVictory = (
+  //   renderBoard: (blocks: BlockModel[]) => void,
+  //   winner: string
+  // ) => {
+  //   endGame(renderBoard, `${winner} が勝利しました`);
+  // };
+
+  // const endWithDraw = (renderBoard: (blocks: BlockModel[]) => void) => {
+  //   if (
+  //     board.blocks.filter(
+  //       (block) => block.status !== "x" && block.status !== "○"
+  //     ).length === 0
+  //   ) {
+  //     endGame(renderBoard, "全てのマスが埋まりました");
+  //   }
+  // };
+
+  return (
+    <div className="App">
+      <Player currentPlayerName={currentPlayer.name}></Player>
+      <Board onClick={onClick} board={board} setBoard={setBoard}></Board>
+    </div>
+  );
 }
 
 export default App;

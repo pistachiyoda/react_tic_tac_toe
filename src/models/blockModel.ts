@@ -1,10 +1,14 @@
 import { position } from "./interfaces";
 
-export class Block {
+export class BlockModel {
   #status: "○" | "x" | "";
   #position: position;
-  constructor(position: position) {
-    this.#status = "";
+  constructor(position: position, status: "○" | "x" | "" | null = null) {
+    if (!status) {
+      this.#status = "";
+    } else {
+      this.#status = status;
+    }
     this.#position = position;
   }
 
