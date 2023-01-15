@@ -1,8 +1,12 @@
 import React from "react";
+import { BoardModel } from "../models/boardModel";
 import { position } from "../models/interfaces";
-// 型修正
-export const Block = (props: any) => {
-  const { onClick, board, x, y } = props;
+export const Block: React.FC<{
+  onClick: (position: position, board: BoardModel) => void;
+  board: BoardModel;
+  x: number;
+  y: number;
+}> = ({ onClick, board, x, y }) => {
   const position: position = { x, y };
   return (
     <div

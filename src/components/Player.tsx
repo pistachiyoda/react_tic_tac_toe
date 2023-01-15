@@ -1,7 +1,7 @@
 import React from "react";
 
-// 型修正
-export const Player = (props: any) => {
-  const { currentPlayerName } = props;
+export const Player: React.FC<{ currentPlayerName: string }> = ({
+  currentPlayerName,
+}) => {
   return <h2>{currentPlayerName}</h2>;
 };

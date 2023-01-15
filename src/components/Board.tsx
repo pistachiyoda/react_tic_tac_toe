@@ -1,11 +1,14 @@
-import React, { FC } from "react";
+import React from "react";
+import { BlockModel } from "../models/blockModel";
+import { BoardModel } from "../models/boardModel";
 import { Block } from "./Block";
+import { position } from "../models/interfaces";
 
-// 型修正
-export const Board = (props: any) => {
-  const { onClick, board, setBoard } = props;
-  console.log(board);
-  const blocks = board.blocks.map((block: any, i: any) => {
+export const Board: React.FC<{
+  onClick: (position: position, board: BoardModel) => void;
+  board: BoardModel;
+}> = ({ onClick, board }) => {
+  const blocks = board.blocks.map((block: BlockModel, i: number) => {
     return (
       <Block
         key={i}

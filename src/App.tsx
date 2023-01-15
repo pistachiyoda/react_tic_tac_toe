@@ -108,7 +108,7 @@ function App() {
   return (
     <div className="App">
       <Player currentPlayerName={currentPlayer.name}></Player>
-      <Board onClick={onClick} board={board} setBoard={setBoard}></Board>
+      <Board onClick={onClick} board={board}></Board>
     </div>
   );
 }
