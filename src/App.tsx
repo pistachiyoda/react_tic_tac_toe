@@ -16,15 +16,16 @@ function App() {
 
   const onClick = (position: position, board: BoardModel) => {
     setBoard(currentPlayer.setMark(position, board));
-    togglePlayer();
-    checkThreeInARow();
+    endProcess(board);
   };
 
   const togglePlayer = () => {
-    setCurrentPlayer(currentPlayer === players[0] ? players[1] : players[0]);
+    setCurrentPlayer((cp) =>
+      cp.mark === players[0].mark ? players[1] : players[0]
+    );
   };
 
-  const checkThreeInARow = (): PlayerModel | null => {
+  const checkThreeInARow = (board: BoardModel): PlayerModel | null => {
     for (let playerIndex = 0; playerIndex < 2; playerIndex++) {
       for (let i = 0; i < 3; i++) {
         const sameXBlocks = board.blocks.filter(
@@ -67,40 +68,42 @@ function App() {
     return null;
   };
 
-  // const init = () => {
-  //   setPlayers([
-  //     new PlayerModel("player1", "○"),
-  //     new PlayerModel("player2", "x"),
-  //   ]);
-  //   setCurrentPlayer(players[0]);
-  //   setBoard(new BoardModel());
-  // };
+  const init = () => {
+    setPlayers(() => [
+      new PlayerModel("player1", "○"),
+      new PlayerModel("player2", "x"),
+    ]);
+    setCurrentPlayer(players[0]);
+    setBoard(new BoardModel());
+  };
 
-  // const endGame = (
-  //   renderBoard: (blocks: BlockModel[]) => void,
-  //   message: string
-  // ) => {
-  //   if (confirm(`${message}!もう一回プレイしましょう！！`)) {
-  //     init();
-  //   }
-  // };
+  const endGame = (message: string) => {
+    if (confirm(`${message}!もう一回プレイしましょう！！`)) {
+      init();
+    }
+  };
 
-  // const endWithVictory = (
-  //   renderBoard: (blocks: BlockModel[]) => void,
-  //   winner: string
-  // ) => {
-  //   endGame(renderBoard, `${winner} が勝利しました`);
-  // };
+  const endWithVictory = (winner: string) => {
+    endGame(`${winner} が勝利しました`);
+  };
 
-  // const endWithDraw = (renderBoard: (blocks: BlockModel[]) => void) => {
-  //   if (
-  //     board.blocks.filter(
-  //       (block) => block.status !== "x" && block.status !== "○"
-  //     ).length === 0
-  //   ) {
-  //     endGame(renderBoard, "全てのマスが埋まりました");
-  //   }
-  // };
+  const endWithDraw = (): void => {
+    endGame("全てのマスが埋まりました");
+  };
+
+  const endProcess = (board: BoardModel) => {
+    if (checkThreeInARow(board)) {
+      setTimeout(() => endWithVictory(`${checkThreeInARow(board)?.name}`));
+    } else if (
+      board.blocks.filter(
+        (block) => block.status !== "x" && block.status !== "○"
+      ).length === 0
+    ) {
+      setTimeout(() => endWithDraw());
+    } else {
+      togglePlayer();
+    }
+  };
 
   return (
     <div className="App">
